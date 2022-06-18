@@ -2,29 +2,26 @@ package jm.task.core.jdbc.dao;
 
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
 
-import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
-    public UserDaoHibernateImpl() {
+    private final SessionFactory factory = Util.getSessionFactory();
 
+    public UserDaoHibernateImpl() {
     }
 
-
-    @Override
     public void createUsersTable() {
         offerQuery("create table users" +
-                        "(id bigint not null auto_increment," +
-                        "name varchar(15)," +
-                        "last_name varchar(15)," +
-                        "age tinyint," +
-                        "primary key (id))");
+                "(id bigint not null auto_increment," +
+                "name varchar(15)," +
+                "last_name varchar(15)," +
+                "age tinyint," +
+                "primary key (id))");
     }
 
     public void dropUsersTable() {
@@ -45,30 +42,22 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     public List<User> getAllUsers() {
-        return null;
+        List<User> allUsers = Collections.emptyList();
+        try (Session session = factory.openSession()) {
+            allUsers = session.createQuery("from User").list();
+        } catch (Exception e) {
+            // ignore
+        }
+        return allUsers;
     }
 
     private void offerQuery(String sql) {
-
-        Transaction tran = null;
-        try (Session session = Util.getSession()) {
-             tran = session.beginTransaction();
+        try (Session session = factory.openSession()) {
+            Transaction transaction = session.beginTransaction();
             session.createNativeQuery(sql).executeUpdate();
-            tran.commit();
+            transaction.commit();
         } catch (Exception e) {
-            if (tran != null) {
-                tran.rollback();
-            }
-            e.printStackTrace();
+            // ignore
         }
-
-
-//        try (Session session = Util.getSession()) {
-//            session.createNativeQuery(sql);
-//        }
-//        catch (HibernateException e) {
-//            // ignore
-//        }
-
     }
 }
