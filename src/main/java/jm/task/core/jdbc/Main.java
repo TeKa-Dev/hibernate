@@ -18,17 +18,17 @@ public class Main {
 
     public static void main(String[] args) {
         service.createUsersTable();
-        service.saveUser("Kolya", "Ivanov", (byte) 15);
-        showInfoByIndex(0);
-        service.saveUser("Sveta", "Sidorova", (byte) 20);
-        showInfoByIndex(1);
-        service.saveUser("Vasya", "Petrov", (byte) 30);
-        showInfoByIndex(2);
-        service.saveUser("Katya", "Smirnova", (byte) 25);
-        showInfoByIndex(3);
-
-        System.out.println(service.getAllUsers());
-        service.cleanUsersTable();
+//        service.saveUser("Kolya", "Ivanov", (byte) 15);
+//        showInfoByIndex(0);
+//        service.saveUser("Sveta", "Sidorova", (byte) 20);
+//        showInfoByIndex(1);
+//        service.saveUser("Vasya", "Petrov", (byte) 30);
+//        showInfoByIndex(2);
+//        service.saveUser("Katya", "Smirnova", (byte) 25);
+//        showInfoByIndex(3);
+//
+//        System.out.println(service.getAllUsers());
+//        service.cleanUsersTable();
         service.dropUsersTable();
     }
     static void showInfoByIndex(int i) {
