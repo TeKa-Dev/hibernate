@@ -52,11 +52,15 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     private void offerQuery(String sql) {
+        Transaction transaction = null;
         try (Session session = factory.openSession()) {
-            Transaction transaction = session.beginTransaction();
+            transaction = session.beginTransaction();
             session.createNativeQuery(sql).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
             // ignore
         }
     }
