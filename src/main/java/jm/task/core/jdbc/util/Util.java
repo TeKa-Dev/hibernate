@@ -17,39 +17,26 @@ public class Util {
     private static final String USER = "user";
     private static final String PASS = "user";
 
-    private static Statement statement;
     private static SessionFactory sessionFactory;
 
-    public static Statement getStatement() {
-        if (statement == null) {
-            try {
-                statement = DriverManager
-                        .getConnection(URL, USER, PASS)
-                        .createStatement();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+    static {
+        try {
+            Configuration configuration = new Configuration()
+                    .setProperty(Environment.URL, URL)
+                    .setProperty(Environment.USER, USER)
+                    .setProperty(Environment.PASS, PASS)
+                    .addAnnotatedClass(User.class);
+
+            ServiceRegistry registry = new StandardServiceRegistryBuilder()
+                    .applySettings(configuration.getProperties()).build();
+
+            sessionFactory = configuration.buildSessionFactory(registry);
+        } catch (HibernateException e) {
+            e.printStackTrace();
         }
-        return statement;
     }
 
     public static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration()
-                        .setProperty(Environment.URL, URL)
-                        .setProperty(Environment.USER, USER)
-                        .setProperty(Environment.PASS, PASS)
-                        .addAnnotatedClass(User.class);
-
-                ServiceRegistry registry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-
-                sessionFactory = configuration.buildSessionFactory(registry);
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
-        }
         return sessionFactory;
     }
 }

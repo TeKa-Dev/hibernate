@@ -2,6 +2,7 @@ package jm.task.core.jdbc;
 
 import jm.task.core.jdbc.service.UserService;
 import jm.task.core.jdbc.service.UserServiceImpl;
+import jm.task.core.jdbc.util.Util;
 
 public class Main {
     static UserService service = new UserServiceImpl();
@@ -21,6 +22,8 @@ public class Main {
         System.out.println(service.getAllUsers());
         service.cleanUsersTable();
         service.dropUsersTable();
+
+        Util.getSessionFactory().close();
     }
 
     static void showInfoByIndex(int i) {

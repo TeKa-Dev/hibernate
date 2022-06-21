@@ -29,16 +29,28 @@ public class UserDaoHibernateImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        offerQuery("insert into users (name, last_name, age)" +
-                "values (\'" + name + "\', \'"+ lastName + "\', "+ age + ");");
+        try (Session session = factory.openSession()) {
+            session.save(new User(name, lastName, age));
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     public void removeUserById(long id) {
-        offerQuery("delete from users where id = " + id);
+        try (Session session = factory.openSession()) {
+            session.createQuery("delete User where id = :id").setParameter("id", id);
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     public void cleanUsersTable() {
-        offerQuery("delete from users");
+        try (Session session = factory.openSession()) {
+            session.createQuery("delete User");
+        } catch (Exception e) {
+            // ignore
+        }
+
     }
 
     public List<User> getAllUsers() {
@@ -58,10 +70,12 @@ public class UserDaoHibernateImpl implements UserDao {
             session.createNativeQuery(sql).executeUpdate();
             transaction.commit();
         } catch (Exception e) {
-            if (transaction != null) {
+            try {
+                assert transaction != null;
                 transaction.rollback();
+            } catch (Exception ex) {
+                // ignore
             }
-            // ignore
         }
     }
 }
